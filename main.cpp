@@ -1,8 +1,7 @@
 #include <QCoreApplication>
 #include "Lexer.h"
 #include "Indexer.h"
-//#include "CommandHandler.h"
-#include "ParserFactory.h"
+#include "cmd_factory.h"
 
 #include <QDebug>
 #include <QString>
@@ -17,24 +16,53 @@ int main(int argc, char *argv[])
     Indexer indexer("C:/TP_YNOV");
     indexer.processIndexingCommand();
 
+    bool test = false;
+    bool in = true;
     Lexer lexer;
     lexer.loadDialect("C:/Users/Querido/Documents/indexer/dico.json");
-    QString input = QLatin1String("ADD");
-    lexer.setSource(input);
-    foreach (auto token, lexer.tokens())
-    {
-        auto tok = &token;
-        qDebug() << "donne moi le token :" << tok;
-        qDebug() << "donne moi le texte :" << token->text();
-        qDebug() << "donne moi le type :" <<token->type();
-    }
-    qDebug() << lexer;
-//    CommandHandler commandHandler(indexer);
-//    commandHandler.processCommand("ADD");
 
-    ParserFactory *factory = new ParserFactory;
-    Parser *add = factory->create("ADD");
+     CmdFactory *factory = new CmdFactory;
 
+     while(!test)
+     {
+        QString input = in ? QLatin1String("ADD WHITELIST myster") : QLatin1String("CLEAR WHITELIST");
+
+        lexer.setSource(input);
+
+        foreach (auto token, lexer.tokens())
+        {
+            auto tok = &token;
+            qDebug() << "donne moi le token :" << tok;
+            qDebug() << "donne moi le texte :" << token->text();
+            qDebug() << "donne moi le type :" <<token->type();
+        }
+
+        QString s = lexer.tokens()[0]->text();
+
+        if(s == "ADD")
+        {
+            Cmd *command = factory->create("CmdAdd");
+            command->parse(lexer.tokens());
+            in = false;
+        }
+        else if(s == "GET")
+        {
+            Cmd *command = factory->create("CmdGet");
+            command->parse(lexer.tokens());
+            test = true;
+        }
+        else if(s == "CLEAR")
+        {
+            Cmd *command = factory->create("CmdClear");
+            command->parse(lexer.tokens());
+            test = true;
+        }
+        else if(s == "SEARCH")
+        {
+            Cmd *command = factory->create("CmdSearch");
+            command->parse(lexer.tokens());
+        }
+     }
     return a.exec();
 
 

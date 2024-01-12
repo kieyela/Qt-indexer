@@ -7,16 +7,12 @@ CONFIG += c++17 cmdline console
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
-        AddCommand.cpp \
-        CommandHandler.cpp \
         Database.cpp \
         Debug.cpp \
         Indexer.cpp \
         Lexer.cpp \
-        Parser.cpp \
+        cmd_factory.cpp \
         main.cpp \
-        parserExeption.cpp \
-        parserFactory.cpp \
         token.cpp
 
 # Default rules for deployment.
@@ -25,15 +21,9 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 
 HEADERS += \
-    AddCommand.h \
-    CommandHandler.h \
     Database.h \
     Debug.h \
     Indexer.h \
     Lexer.h \
-    Parser.h \
-    ParserFactory.h \
-    getCommande.h \
-    parserExeption.h \
-    pushCommande.h \
+    cmd_factory.h \
     token.h
