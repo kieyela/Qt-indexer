@@ -1,0 +1,6 @@
+#include "Indexer"
+
+Indexer::Indexer()
+{
+
+}
