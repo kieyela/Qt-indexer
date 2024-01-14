@@ -13,15 +13,15 @@ int main(int argc, char *argv[])
     Database m_database = Database("testdb.db");
     m_database.getDatabaseConnection();
 
-    Indexer indexer("C:/TP_YNOV");
-    indexer.processIndexingCommand();
+    //Indexer indexer("C:/TP_YNOV");
+    //indexer.processIndexingCommand();
 
     bool test = false;
     bool in = true;
     Lexer lexer;
     lexer.loadDialect("C:/Users/Querido/Documents/indexer/dico.json");
 
-     CmdFactory *factory = new CmdFactory;
+     CommandeFactory *factory = new CommandeFactory;
 
      while(!test)
      {
@@ -41,25 +41,25 @@ int main(int argc, char *argv[])
 
         if(s == "ADD")
         {
-            Cmd *command = factory->create("CmdAdd");
+            Commande *command = factory->create("CmdAdd");
             command->parse(lexer.tokens());
             in = false;
         }
         else if(s == "GET")
         {
-            Cmd *command = factory->create("CmdGet");
+            Commande *command = factory->create("CmdGet");
             command->parse(lexer.tokens());
             test = true;
         }
         else if(s == "CLEAR")
         {
-            Cmd *command = factory->create("CmdClear");
+            Commande *command = factory->create("CmdClear");
             command->parse(lexer.tokens());
             test = true;
         }
         else if(s == "SEARCH")
         {
-            Cmd *command = factory->create("CmdSearch");
+            Commande *command = factory->create("CmdSearch");
             command->parse(lexer.tokens());
         }
      }

@@ -8,11 +8,11 @@
 #include "QSqlQuery"
 #include <QSqlError>
 
-/** Util class **/
 
 static QString checkAndGetFolderType(Token token)
 {
-    if(token.type() == "TYPE_FILES")
+    qDebug()<<token.type();
+    if(token.type() == "IDENTIFIER")
     {
         return token.text().toLower();
     }
@@ -37,26 +37,25 @@ static void executeCommand(QString request)
     }
 
     // Test if values are insert
-    /*if(query.exec("SELECT * FROM " + this->folderType)) {
-        while (query.next()) {
-            qDebug() << query.value("folderPath");
-        }
-    }*/
+//    if(query.exec("SELECT * FROM " + this->folderType)) {
+//        while (query.next()) {
+//            qDebug() << query.value("folderPath");
+//        }
+//    }
 
     db.close();
 }
 
-/** CmdSearch class **/
 
-CmdSearch::CmdSearch() {}
+CommandeSearch::CommandeSearch() {}
 
-void CmdSearch::parse(QList<Token *> tokens) {
+void CommandeSearch::parse(QList<Token *> tokens) {
     qDebug() << __FUNCTION__ << "on SEARCH";
     // TODO call state chart like this -> stateChart(this)
 
 }
 
-void CmdSearch::run() {
+void CommandeSearch::run() {
     qDebug() << __FUNCTION__ << "on SEARCH";
 }
 
@@ -64,9 +63,9 @@ void CmdSearch::run() {
 
 /** CmdGet class **/
 
-CmdGet::CmdGet() {}
+CommandeGet::CommandeGet() {}
 
-void CmdGet::parse(QList<Token *> tokens) {
+void CommandeGet::parse(QList<Token *> tokens) {
     qDebug() << __FUNCTION__ << "on GET" << tokens[1]->text();
 
     // complete the data
@@ -76,7 +75,7 @@ void CmdGet::parse(QList<Token *> tokens) {
     this->run();
 }
 
-void CmdGet::run() {
+void CommandeGet::run() {
     qDebug() << __FUNCTION__ << "on GET ";
     // create request
     QString command = "SELECT * FROM " + this->folderType;
@@ -89,9 +88,9 @@ void CmdGet::run() {
 
 /** CmdAdd class **/
 
-CmdAdd::CmdAdd() {}
+CommandeAdd::CommandeAdd() {}
 
-void CmdAdd::parse(QList<Token *> tokens) {
+void CommandeAdd::parse(QList<Token *> tokens) {
     //qDebug() << __FUNCTION__ << "on ADD";
 
     // complete the data
@@ -103,7 +102,7 @@ void CmdAdd::parse(QList<Token *> tokens) {
 }
 
 
-void CmdAdd::run() {
+void CommandeAdd::run() {
     qDebug() << __FUNCTION__ << "on ADD class";
 
     // create request
@@ -116,9 +115,9 @@ void CmdAdd::run() {
 
 /** CmdClear class **/
 
-CmdClear::CmdClear() {}
+CommandeClear::CommandeClear() {}
 
-void CmdClear::parse(QList<Token *> tokens) {
+void CommandeClear::parse(QList<Token *> tokens) {
     qDebug() << __FUNCTION__ << "on CLEAR" << tokens[1]->text();
 
     // complete the data
@@ -128,7 +127,7 @@ void CmdClear::parse(QList<Token *> tokens) {
     this->run();
 }
 
-void CmdClear::run() {
+void CommandeClear::run() {
     qDebug() << __FUNCTION__ << "on CLEAR ";
     // create request
     QString command = "DELETE FROM " + this->folderType;

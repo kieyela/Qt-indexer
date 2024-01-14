@@ -9,11 +9,11 @@
 
 #define STR_PTR(ptr) QString("0x%1").arg(reinterpret_cast<quintptr>(ptr), QT_POINTER_SIZE * 2, 16, QChar('0'))
 
-class Cmd {
+class Commande {
     QString _type;
 
 public:
-    virtual ~Cmd() {
+    virtual ~Commande() {
         qDebug() << __FUNCTION__;
     }
 
@@ -22,22 +22,22 @@ public:
 
 };
 
-typedef Cmd *(*CreateCmdFn)();
+typedef Commande *(*CreateCmdFn)();
 
 /**
  * Ce template ou modèle de classe permet de rajouter la méthode statique Create à n'importe quelle classe Cmd
  */
 template <class T>
-class TCmdFactory : public Cmd {
+class TCmdFactory : public Commande {
 public:
-    static Cmd *create() {
+    static Commande *create() {
         qDebug() << __FUNCTION__ << "constructs";
         return new T;
     }
 };
 
 
-class CmdSearch : public TCmdFactory<CmdSearch> {
+class CommandeSearch : public TCmdFactory<CommandeSearch> {
 
     QString filename;
     QString lastModified;
@@ -49,7 +49,7 @@ class CmdSearch : public TCmdFactory<CmdSearch> {
     QString type;
 
 public:
-    CmdSearch();
+    CommandeSearch();
 
 
     void parse(QList<Token *> tokens);
@@ -57,10 +57,10 @@ public:
 
 };
 
-class CmdGet : public TCmdFactory<CmdGet> {
+class CommandeGet : public TCmdFactory<CommandeGet> {
     QString folderType;
 public:
-    CmdGet();
+    CommandeGet();
     void get() {
         qDebug() << __FUNCTION__;
     }
@@ -69,21 +69,21 @@ public:
     void run();
 };
 
-class CmdAdd: public TCmdFactory<CmdAdd> {
+class CommandeAdd: public TCmdFactory<CommandeAdd> {
     QString folderType;
     QString folderPath;
 
 public:
-    CmdAdd();
+    CommandeAdd();
 
     void parse(QList<Token *> tokens);
     void run();
 };
 
-class CmdClear : public TCmdFactory<CmdClear> {
+class CommandeClear : public TCmdFactory<CommandeClear> {
     QString folderType;
 public:
-    CmdClear();
+    CommandeClear();
     void get() {
         qDebug() << __FUNCTION__;
     }
@@ -92,15 +92,15 @@ public:
     void run();
 };
 
-class CmdFactory {
+class CommandeFactory {
     QMap<QString, CreateCmdFn> m_factoryMap;
 
 public:
-    QList<Cmd *>               cmdList;
+    QList<Commande *>               cmdList;
     /**
      * le destructeur doit aussi detruire tous les animaux que la factory a créé
      */
-    ~CmdFactory() {
+    ~CommandeFactory() {
         foreach (auto cmd, cmdList) { delete cmd; }
     }
 
@@ -120,21 +120,21 @@ public:
      * @brief CmdFactory
      * le constructeur inscrit les classes de command connues
      */
-    CmdFactory() {
+    CommandeFactory() {
         qDebug() << __FUNCTION__;
-        Register("CmdSearch", &CmdSearch::create);
-        Register("CmdGet", &CmdGet::create);
-        Register("CmdAdd", &CmdAdd::create);
-        Register("CmdClear", &CmdClear::create);
+        Register("CmdSearch", &CommandeSearch::create);
+        Register("CmdGet", &CommandeGet::create);
+        Register("CmdAdd", &CommandeAdd::create);
+        Register("CmdClear", &CommandeClear::create);
     }
 
-    Cmd *create(QString cmdName) {
+    Commande *create(QString cmdName) {
         qDebug() << __FUNCTION__ << cmdName;
 
         CreateCmdFn fn = m_factoryMap[cmdName];
         if (fn == nullptr) {
         }
-        Cmd *cmd = fn();
+        Commande *cmd = fn();
 
         cmdList.append(cmd);
         return cmd;

@@ -37,14 +37,16 @@ bool Database::createTable()
 {
     QSqlQuery query(m_db);
 
-    QString tblFileCreate = "CREATE TABLE IF NOT EXISTS files ("
-                            "id STRING PRIMARY KEY,"
-                            "fileName STRING,"
-                            "lastModified DATE,"
-                            "creationDate DATE,"
-                            "fileSize BIGINT,"
-                            "fileExtension STRING,"
-                            "fileType STRING"
+    QString tblFileCreate = "CREATE TABLE IF NOT EXISTS whitelist ("
+                            "\"id\" TEXT PRIMARY KEY,"
+                            "\"fileName\" TEXT,"
+                            "\"lastModified\" DATE,"
+                            "\"creationDate\" DATE,"
+                            "\"fileSize\" INTEGER,"
+                            "\"fileExtension\" TEXT,"
+                            "\"fileType\" TEXT,"
+                            "\"folderPath\" TEXT"
+
                             ")";
     if (!query.exec(tblFileCreate)) {
         qCritical() << "Failed to create the 'files' table:" << query.lastError().text();
