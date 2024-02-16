@@ -1,3 +1,4 @@
+
 {
     "SEMICOLON": [";"],
     "FINAL": ["\n", ";"],
@@ -7,5 +8,6 @@
     "COMMAND": ["SEARCH", "STATUS", "INDEXER", "GET", "ADD", "PUSH", "CLEAR"],
     "SEARCH_OPTION": ["LAST_MODIFIED", "CREATED", "MAX_SIZE", "MIN_SIZE", "SIZE", "EXT", "TYPE"],
     "OPERATOR": ["BETWEEN", "OR", "AND", "SINCE", "LAST", "AGO"],
-    "DURATION": ["MINUTES", "HOURS", "DAYS", "MONTHS", "YEAR"]
+    "DURATION": ["MINUTES", "HOURS", "DAYS", "MONTHS", "YEAR"],
+    "TYPEFILES": ["WHITELIST", "BLACKLIST"]
 }
