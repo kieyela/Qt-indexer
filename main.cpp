@@ -11,21 +11,46 @@ int main(int argc, char *argv[])
 {
     QCoreApplication a(argc, argv);
     Database m_database = Database("testdb.db");
-    m_database.getDatabaseConnection();
 
-    //Indexer indexer("C:/TP_YNOV");
-    //indexer.processIndexingCommand();
+    m_database.openConnection();
+
+    if (m_database.createTable()) {
+        qDebug() << "La table a été créée avec succès.";
+    } else {
+        qCritical() << "Erreur lors de la création de la table.";
+    }
+
+    //QSqlDatabase db = m_database.getDatabaseConnection();
+
+//    if (m_database.getDatabaseConnection().open()) {
+//        qDebug() << "Connexion à la base de données réussie.";
+
+//        if (m_database.createTable()) {
+//            qDebug() << "La table a été créée avec succès.";
+//        } else {
+//            qCritical() << "Erreur lors de la création de la table.";
+//        }
+//        m_database.closeConnection();
+//    } else {
+//        qCritical() << "Erreur lors de l'ouverture de la base de données.";
+//    }
+
+
+
+//    Indexer indexer("C:/TP_YNOV");
+//    indexer.processIndexingCommand();
 
     bool test = false;
     bool in = true;
     Lexer lexer;
-    lexer.loadDialect("C:/Users/Querido/Documents/indexer/dico.json");
+
+    //lexer.loadDialect("C:/Users/Querido/Documents/indexer/dico.json");
 
      CommandeFactory *factory = new CommandeFactory;
 
      while(!test)
      {
-        QString input = in ? QLatin1String("ADD WHITELIST myster") : QLatin1String("CLEAR WHITELIST");
+        QString input = in ? QLatin1String("ADD file hello") : QLatin1String("CLEAR WHITELIST");
 
         lexer.setSource(input);
 
@@ -37,27 +62,27 @@ int main(int argc, char *argv[])
             qDebug() << "donne moi le type :" <<token->type();
         }
 
-        QString s = lexer.tokens()[0]->text();
+        QString lex = lexer.tokens()[0]->text();
 
-        if(s == "ADD")
+        if(lex == "ADD")
         {
             Commande *command = factory->create("CmdAdd");
             command->parse(lexer.tokens());
             in = false;
         }
-        else if(s == "GET")
+        else if(lex == "GET")
         {
             Commande *command = factory->create("CmdGet");
             command->parse(lexer.tokens());
             test = true;
         }
-        else if(s == "CLEAR")
+        else if(lex == "CLEAR")
         {
             Commande *command = factory->create("CmdClear");
             command->parse(lexer.tokens());
             test = true;
         }
-        else if(s == "SEARCH")
+        else if(lex == "SEARCH")
         {
             Commande *command = factory->create("CmdSearch");
             command->parse(lexer.tokens());

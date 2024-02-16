@@ -13,16 +13,31 @@ Database::Database(const QString& dbName)
 QSqlDatabase Database::getDatabaseConnection() {
     QString connectionName = QString("indexerConnection_%1").arg((quintptr)QThread::currentThreadId());
     if (!QSqlDatabase::contains(connectionName)) {
-        QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE", connectionName);
+        QSqlDatabase m_db = QSqlDatabase::addDatabase("QSQLITE", connectionName);
         QString appDataLocation = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation);
-        db.setDatabaseName(appDataLocation + "/indexerFile.db");
-        if (!db.open()) {
-            qWarning() << "Error: Cannot open database" << db.lastError().text();
-            throw std::runtime_error("Database connection failed");
+        m_db.setDatabaseName(appDataLocation + "/indexerFile.db");
+        if (!m_db.open()) {
+            qWarning() << "Erreur : Impossible d'ouvrir la base de données" << m_db.lastError().text();
+                                                                                throw std::runtime_error("Échec de la connexion à la base de données");
         }
-        return db;
+
+        // Définir le nom de la connexion pour la base de données nouvellement créée
+        m_db.setConnectOptions("connectOptions=QSQLITE_ENABLE_SHARED_CACHE");
+
+        return m_db;
     }
     return QSqlDatabase::database(connectionName);
+}
+
+void Database::openConnection()
+{
+    if (!m_db.isOpen()) {
+        if (!m_db.open()) {
+                                                                                qWarning() << "Erreur : Impossible d'ouvrir la base de données" << m_db.lastError().text();
+                                                                                                                                                   throw std::runtime_error("Échec de la connexion à la base de données");
+        }
+
+    }
 }
 
 void Database::closeConnection()
@@ -35,23 +50,32 @@ void Database::closeConnection()
 
 bool Database::createTable()
 {
+    if (!m_db.isOpen()) {
+        qCritical() << "Erreur : La base de données n'est pas ouverte.";
+            return false;
+    }
     QSqlQuery query(m_db);
 
-    QString tblFileCreate = "CREATE TABLE IF NOT EXISTS whitelist ("
-                            "\"id\" TEXT PRIMARY KEY,"
-                            "\"fileName\" TEXT,"
-                            "\"lastModified\" DATE,"
-                            "\"creationDate\" DATE,"
-                            "\"fileSize\" INTEGER,"
-                            "\"fileExtension\" TEXT,"
-                            "\"fileType\" TEXT,"
-                            "\"folderPath\" TEXT"
+    QStringList existingTables = m_db.tables();
+    if (existingTables.contains("files")) {
+        return true;
+    }
 
-                            ")";
+    QString tblFileCreate = "CREATE TABLE IF NOT EXISTS files ("
+                            "'id' TEXT PRIMARY KEY,"
+                            "'fileName' TEXT,"
+                            "'lastModified' DATE,"
+                            "'creationDate' DATE,"
+                            "'fileSize' INTEGER,"
+                            "'fileExtension' TEXT,"
+                            "'fileType' TEXT,"
+                            "'folderPath' TEXT"
+                            ");";
     if (!query.exec(tblFileCreate)) {
-        qCritical() << "Failed to create the 'files' table:" << query.lastError().text();
+        qCritical() << "Failed to create the table::" << query.lastError().text();
         return false;
     }
+    qDebug() << "La table 'whitelist' a été créée avec succès.";
 
     return true;
 }

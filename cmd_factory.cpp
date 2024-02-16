@@ -12,7 +12,7 @@
 static QString checkAndGetFolderType(Token token)
 {
     qDebug()<<token.type();
-    if(token.type() == "IDENTIFIER")
+    if(token.type() == "TYPEFILES")
     {
         return token.text().toLower();
     }
